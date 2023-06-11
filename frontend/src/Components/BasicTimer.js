@@ -89,7 +89,7 @@ const BasicTimer = () => {
       duration: workoutTime,
       created: getFormattedDate(),
     };
-    let response = await axios.post("http://localhost:8080/workout", obj);
+    let response = await axios.post("http://localhost:8080/user/login", obj);
     console.log("resp", response);
   }
   function pauseTimer() {

@@ -39,7 +39,7 @@ const WorkoutLog = () => {
   }
   async function deleteLog(id) {
     const res = await axios.delete(`http://localhost:8080/workout/${id}`)
-    // alert('Data Deleted ')
+    alert('Logs Deleted Successfully ')
     await getLogs();
     console.log('deleted', res);
   }

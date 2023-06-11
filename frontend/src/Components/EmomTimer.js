@@ -34,11 +34,6 @@ const EmomTimer = () => {
   }, [isRunning]);
 
   const startTimer = () => {
-    if(!(numberOfMinutes.charCodeAt(0) >= 48 && numberOfMinutes.charCodeAt(0) <=57) || !(numberOfSeconds.charCodeAt(0) >= 48 && numberOfSeconds.charCodeAt(0) <=57)
-        || !(numberOfRounds.charCodeAt(0) >= 48 && numberOfRounds.charCodeAt(0) <=57) || !(restTime.charCodeAt(0) >= 48 && restTime.charCodeAt(0) <=57)){
-      alert('Please Enter Integer')
-      return
-    }
     if(Number(numberOfSeconds)===0 || Number(numberOfSeconds)==0){
       alert('Please enter workout time and Number of Rounds')
     }else{

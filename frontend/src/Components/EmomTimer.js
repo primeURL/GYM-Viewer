@@ -9,7 +9,7 @@ import longBeep from "../assets/long-beep.mp3";
 import workoutCompleted from "../assets/workoutCompleted.mp3";
 
 const EmomTimer = () => {
-  const { user } = useAuth0();
+  const userName = localStorage.getItem('userName')
   const [numberOfMinutes, setNumberOfMinutes] = useState(0);
   const [numberOfSeconds, setNumberOfSeconds] = useState(0);
   const [numberOfRounds, setNumberOfRounds] = useState(1);
@@ -73,7 +73,7 @@ const EmomTimer = () => {
   }
   async function saveLogsToDB() {
     let obj = {
-      userName: user.nickname,
+      userName: userName,
       workoutName: "EMOM Timer",
       numberOfRounds: numberOfRounds,
       duration: numberOfMinutes + ":" + numberOfSeconds,

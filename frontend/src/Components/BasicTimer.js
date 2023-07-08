@@ -7,7 +7,7 @@ import shortBeep from "../assets/short-beep.mp3";
 import longBeep from "../assets/long-beep.mp3";
 import workoutCompleted from "../assets/workoutCompleted.mp3";
 const BasicTimer = () => {
-  const { user } = useAuth0();
+  const userName = localStorage.getItem('userName')
   const [workoutTime, setWorkoutTime] = useState(0);
   const [leadTime, setleadTime] = useState(10);
   let [second, setSecond] = useState(0);
@@ -84,12 +84,12 @@ const BasicTimer = () => {
   }
   async function saveLogsToDB() {
     let obj = {
-      userName: user.nickname,
+      userName: userName,
       workoutName: "Basic Timer",
       duration: workoutTime,
       created: getFormattedDate(),
     };
-    let response = await axios.post("http://localhost:8080/user/login", obj);
+    let response = await axios.post("http://localhost:8080/workout", obj);
     console.log("resp", response);
   }
   function pauseTimer() {

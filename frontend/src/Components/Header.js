@@ -1,16 +1,25 @@
 import React, { useState } from "react";
 import { useRef } from "react";
 import { NavLink } from "react-router-dom";
-import { useAuth0 } from "@auth0/auth0-react";
+// import { useAuth0 } from "@auth0/auth0-react";
 import logo2 from "../assets/logo2.png";
 import "../css/header.css";
 import { FaBars, FaTimes } from "react-icons/fa";
 const Header = () => {
-  const { loginWithRedirect, logout, isAuthenticated, user } = useAuth0();
+  // const { loginWithRedirect, logout, isAuthenticated, user } = useAuth0();
   const navLinkStyles = ({ isActive }) => {
     return { color: isActive ? "#00ff11" : "white" };
   };
+  const token = localStorage.getItem('token')
+  const userName = localStorage.getItem('userName')
   const [isMobile, setIsMobile] = useState(false)
+  function handleLogin(){
+    window.location.href = '/login'
+  }
+  function handleLogout(){
+    localStorage.removeItem('token')
+    window.location.href = '/'
+  }
   return (
     <>
       <nav className="navbar">
@@ -25,9 +34,9 @@ const Header = () => {
             </NavLink>
 
           </div>
-          {isAuthenticated && (
+          {token && (
             <div className="user-title">
-              Welcome {user.nickname}
+              Welcome {userName}
             </div>
           )}
         </div>
@@ -36,25 +45,21 @@ const Header = () => {
           <NavLink style={navLinkStyles} to="/" className="workstyles">
             <li>WorkStyles</li>
           </NavLink>
-          {isAuthenticated && <NavLink style={navLinkStyles} to="/workoutlog" className="logs">
+          {token && <NavLink style={navLinkStyles} to="/workoutlog" className="logs">
             <li>Logs</li>
           </NavLink>}
           <NavLink style={navLinkStyles} to="/about" className="about">
             <li>About</li>
           </NavLink>
           <NavLink className="signup">
-            <li>{isAuthenticated ? (
+            <li>{token ? (
               <button className="#signup"
-                onClick={() =>
-                  logout({
-                    logoutParams: { returnTo: window.location.origin },
-                  })
-                }
+                onClick={handleLogout}
               >
                 Log Out
               </button>
             ) : (
-              <button className="#signup" onClick={() => loginWithRedirect()}>Log In</button>
+              <button className="#signup" onClick={handleLogin}>Log In</button>
             )}</li>
           </NavLink>
         </ul>

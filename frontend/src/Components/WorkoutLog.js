@@ -6,7 +6,7 @@ import '../css/workoutLog.css'
 import { MDBBadge, MDBBtn, MDBTable, MDBTableHead, MDBTableBody } from 'mdb-react-ui-kit';
 
 const WorkoutLog = () => {
-  const { user } = useAuth0();
+  const userName = localStorage.getItem('userName')
   const [filteredLogs, setFilteredLogs] = useState([])
   const [userLogs, setUserLogs] = useState([]);
   const [selectedLogType, setSelectedLogType] = useState('Basic Timer')
@@ -19,14 +19,14 @@ const WorkoutLog = () => {
 
   // let response = null
   useEffect(() => {
-    if (user) {
+    if (userName) {
       getLogs()
     }
-  }, [user]);
+  }, [userName]);
   async function getLogs() {
     try {
       const res = await axios.get(
-        `http://localhost:8080/workout/${user.nickname}`
+        `http://localhost:8080/workout/${userName}`
       );
       setUserLogs(res.data);
       let initialData = res.data

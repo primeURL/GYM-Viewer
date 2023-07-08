@@ -9,7 +9,7 @@ import longBeep from "../assets/long-beep.mp3";
 import workoutCompleted from "../assets/workoutCompleted.mp3";
 
 const TabataTimer = () => {
-  const { user } = useAuth0();
+  const userName = localStorage.getItem('userName')
 
   let [numberOfSeconds, setNumberOfSeconds] = useState(0);
   let [numberOfSecondsToDb, setNumberOfSecondsToDb] = useState(0);
@@ -78,7 +78,7 @@ const TabataTimer = () => {
   }
   async function saveLogsToDB() {
     let obj = {
-      userName: user.nickname,
+      userName: userName,
       workoutName: "TABATA Timer",
       numberOfRounds: numberOfRounds,
       duration:

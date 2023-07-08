@@ -7,6 +7,9 @@ import TabataTimer from "./Components/TabataTimer";
 import Protected from "./Components/Protected";
 import WorkoutLog from "./Components/WorkoutLog";
 import EmomTimer from './Components/EmomTimer'
+import SingUp from './auth/SignUp'
+import Login from './auth/Login'
+import EmailVerify from './auth/EmailVerify'
 function App() {
   return (
     <div className="App">
@@ -14,6 +17,10 @@ function App() {
       <Routes>
         {/* <Route path="/" element={<Home />}></Route> */}
         <Route path="/" element={<WorkStyles />}></Route>
+        <Route path="signup" element={<SingUp/>}></Route>
+        <Route path="login" element={<Login/>}></Route>
+        <Route path="user/:id/verify/:token" element={<EmailVerify />} />
+
         <Route path="workoutlog" element={<WorkoutLog />}></Route>
         <Route
           path="basic"

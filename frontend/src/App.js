@@ -10,6 +10,7 @@ import EmomTimer from './Components/EmomTimer'
 import SingUp from './auth/SignUp'
 import Login from './auth/Login'
 import EmailVerify from './auth/EmailVerify'
+import ForgetPassword from './auth/ForgetPassword'
 function App() {
   return (
     <div className="App">
@@ -19,6 +20,7 @@ function App() {
         <Route path="/" element={<WorkStyles />}></Route>
         <Route path="signup" element={<SingUp/>}></Route>
         <Route path="login" element={<Login/>}></Route>
+        <Route path="forgetpassword" element={<ForgetPassword/>}></Route>
         <Route path="user/:id/verify/:token" element={<EmailVerify />} />
 
         <Route path="workoutlog" element={<WorkoutLog />}></Route>

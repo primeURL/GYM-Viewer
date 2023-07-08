@@ -2,9 +2,11 @@ const router = require("express").Router();
 const { User, validateUser } = require("../models/User");
 const bcrypt = require("bcrypt");
 const Joi = require("joi");
+const Opt = require('../models/Otp')
 const Token = require('../models/Token')
 const sendEmail = require('../utils/sendEmail')
-const crypto = require('crypto')
+const crypto = require('crypto');
+const Otp = require("../models/Otp");
 
 //To get All Users
 router.get('/getAllUsers',async(req,res)=>{
@@ -134,6 +136,54 @@ router.get("/:id/verify/:token/", async (req, res) => {
 	}
 });
 
+router.post('/otpToEmail',async(req,res)=>{
+    try {
+        const data = await User.findOne({email : req.body.email})
+        if(!data){
+            return res.status(400).send({ message: "User with given email does not exist" });
+        }
+        const otpCode = Math.floor((Math.random()*10000)+1)
+        const otpData = new Otp({
+            email : req.body.email,
+            code : otpCode,
+            expireIn : new Date().getTime() + 300*1000
+        })
+        await otpData.save()
+        await sendEmail(req.body.email, "Code for Forget Password", JSON.stringify(otpCode));
+        return res.status(200).send({ message: "OTP has send to your email ID" });
+
+    } catch (error) {
+        return res.status(500).send({ message: "Internal Server Error" });
+
+    }
+})
+router.post('/changePassword',async(req,res)=>{
+    try {
+        const data = await Otp.findOne({code : req.body.otpCode})
+        if(!data){
+            return res.status(400).send({ message: "Invalid Code, Try Again" });
+        }
+        const currentTime = new Date().getTime()
+        const diff = data.expireIn - currentTime
+        if(diff < 0){
+            return res.status(400).send({ message: "Code Expires, Try Again" });
+        }
+        if(req.body.password !== req.body.cpassword){
+            return res.status(400).send({ message: "Password does not match" });
+
+        }
+        const user = await User.findOne({email : data.email})
+        const salt = await bcrypt.genSalt(Number(process.env.SALT));
+		const hashPassword = await bcrypt.hash(req.body.password, salt);
+        user.password = hashPassword
+        await user.save()
+        return res.status(200).send({ message: "Password Reset Successfull." });
+
+    } catch (error) {
+        return res.status(500).send({ message: "Internal Server Error" });
+
+    }
+})
 const validate = (data) => {
 	const schema = Joi.object({
 		email: Joi.string().email().required().label("Email"),

@@ -4,13 +4,11 @@ import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-// import env from '../env.json'
 import axios from 'axios'
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -35,29 +33,27 @@ const defaultTheme = createTheme();
 
 export default function Login() {
 const [loading,setLoading] = useState(false)
+const [flag1,setFlag1] = useState(true)
+const [flag2,setFlag2] = useState(false)
 const navigate = useNavigate()
 
-  const handleSubmit = async(event) => {
+  const handleSubmit1 = async(event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const body = {
       email: data.get('email'),
-      password: data.get('password'),
     };
     try {
         setLoading(true)
-        const url = 'http://localhost:8080/auth' + '/login'
-        const response = await axios.post(url,body)
-        console.log('resp:',response);
-        localStorage.setItem('token',response.data.data)
-        localStorage.setItem('userId',response.data.userId)
-        localStorage.setItem('userName',response.data.userName)
+        const url = 'http://localhost:8080/auth' + '/otpToEmail'
+        const {data} = await axios.post(url,body)
+        console.log('resp:',data);
         Swal.fire({
           icon: 'success',
-          title: 'Login Successfull',
-          footer: 'You will be Redirecting to Home Page.'
+          title: data.message,
         }).then(()=>{
-            window.location.href = '/'
+            setFlag1(false)
+            setFlag2(true)
         })
         setLoading(false)
     } catch (error) {
@@ -68,7 +64,42 @@ const navigate = useNavigate()
         ) {
             Swal.fire({
               icon: 'info',
-              title: 'Login Failed',
+              title: 'Failed',
+              text: error.response.data.message,
+            })
+            setLoading(false)
+        }
+    }
+  };
+  const handleSubmit2 = async(event) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const body = {
+      otpCode: data.get('otpCode'),
+      password : data.get('password'),
+      cpassword : data.get('cpassword')
+    };
+    try {
+        setLoading(true)
+        const url = 'http://localhost:8080/auth' + '/changePassword'
+        const {data} = await axios.post(url,body)
+        console.log('resp:',data);
+        Swal.fire({
+          icon: 'success',
+          title: data.message,
+        }).then(()=>{
+            window.location.href = '/login'
+        })
+        setLoading(false)
+    } catch (error) {
+        if (
+            error.response &&
+            error.response.status >= 400 &&
+            error.response.status <= 500
+        ) {
+            Swal.fire({
+              icon: 'info',
+              title: 'Reset Failed',
               text: error.response.data.message,
             })
             setLoading(false)
@@ -93,9 +124,9 @@ const navigate = useNavigate()
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
+            Reset Your Password
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          {flag1 && (<Box component="form" onSubmit={handleSubmit1} noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
@@ -106,39 +137,58 @@ const navigate = useNavigate()
               autoComplete="email"
               autoFocus
             />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-            />
-            {/* {error && <div style={{color:'red',margin:'5px',padding:'5px'}}>{error}</div>} */}
-
             <Button
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign In
+              Get Otp
             </Button>
-            <Grid container>
-              <Grid item xs>
-                <Link href="/forgetpassword" variant="body2">
-                  Forgot password?
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link href="/signup" variant="body2">
-                  {"Don't have an account? Sign Up"}
-                </Link>
-              </Grid>
-            </Grid>
-          </Box>
+          </Box>)}
+          {flag2 && (<Box component="form" onSubmit={handleSubmit2} noValidate sx={{ mt: 1 }}>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="otpCode"
+              label="Enter OTP"
+              name="otpCode"
+              autoComplete="otpCode"
+              autoFocus
+            />
+             <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="password"
+              label="New Password"
+              name="password"
+              type="password"
+              autoComplete="password"
+              autoFocus
+            />
+              <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="cpassword"
+              label="Confirm New Password"
+              name="cpassword"
+              type="password"
+              autoComplete="cpassword"
+              autoFocus
+            />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              Reset
+            </Button>
+          </Box>)}
+          
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>
